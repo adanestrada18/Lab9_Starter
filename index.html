@@ -69,25 +69,39 @@
     </form>
 
     <section id="error-btns">
-      <button>Console Log</button>
-      <button>Console Error</button>
-      <button>Console Count</button>
-      <button>Console Warn</button>
-      <button>Console Assert</button>
-      <button>Console Clear</button>
-      <button>Console Dir</button>
-      <button>Console dirxml</button>
-      <button>Console Group Start</button>
-      <button>Console Group End</button>
-      <button>Console Table</button>
-      <button>Start Timer</button>
-      <button>End Timer</button>
-      <button>Console Trace</button>
-      <button>Trigger a Global Error</button>
+      <button id="Console Log">Console Log</button>
+      <button id="Console Error">Console Error</button>
+      <button id="Console Count">Console Count</button>
+      <button id="Console Warn">Console Warn</button>
+      <button id="Console Assert">Console Assert</button>
+      <button id="Console Clear">Console Clear</button>
+      <button id="Console Dir">Console Dir</button>
+      <button id="Console Dirxml">Console dirxml</button>
+      <button id="Console Group Start">Console Group Start</button>
+      <button id="Console Group End">Console Group End</button>
+      <button id="Console Table">Console Table</button>
+      <button id="Start Timer">Start Timer</button>
+      <button id="End Timer">End Timer</button>
+      <button id="Console Trace">Console Trace</button>
+      <button id="Trigger Global Error">Trigger a Global Error</button>
     </section>
   </main>
 
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
   <script>
+    window.TrackJS && TrackJS.install({ 
+      token: "5c230fcf05ad4e679d68a89e443806b8"
+      // for more configuration options, see https://docs.trackjs.com
+    });
+  </script>
+
+  <script>
+    class LetterError extends Error {
+      constructor(message) {
+        super(message);
+        this.name = "LetterError";
+      }
+    }
     let form = document.querySelector('form');
     form.addEventListener('submit', e => {
       e.preventDefault();
@@ -95,13 +109,93 @@
       let firstNum = document.querySelector('#first-num').value;
       let secondNum = document.querySelector('#second-num').value;
       let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      try{
+        if (isNaN(`${firstNum}`) || isNaN(`${secondNum}`)) {
+          console.log('here');
+          throw new LetterError("Not a number");
+        }
+        output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      }
+      catch(err){
+        console.error("try/catch-bad operators");
+      }
+      finally{
+        console.log("finally ended try-catch");
+      }
     });
 
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
 
     // Start your code here
     // You may move this JS to another file if you wish
+    document.getElementById("Console Log").addEventListener("click",function() {
+      console.log("log");
+    });
+    document.getElementById("Console Error").addEventListener("click",function() {
+      console.error("Error");
+    });
+    document.getElementById("Console Table").addEventListener("click",function() {
+      console.table([
+  {
+    first: 'Adan',
+    last: 'Estrada',
+  },
+  {
+    first: 'Easy',
+    last: 'Money',
+  }
+]);
+    });
+    document.getElementById("Console Dir").addEventListener("click",function() {
+      console.dir(document.head);
+    });
+    document.getElementById("Console Dirxml").addEventListener("click",function() {
+      console.dirxml(document);
+    });
+    const label = 'Errors';
+    document.getElementById("Console Group Start").addEventListener("click",function() {
+      console.group(label);
+    });
+    document.getElementById("Console Group End").addEventListener("click",function() {
+      console.groupEnd(label);
+    });
+    document.getElementById("Start Timer").addEventListener("click",function() {
+      console.time();
+    });
+    document.getElementById("End Timer").addEventListener("click",function() {
+        console.timeEnd();
+    });
+    document.getElementById("Console Trace").addEventListener("click",function() {
+      const first = () => { second(); };
+      const second = () => { third(); };
+      const third = () => { console.trace(); };
+      first();
+    });
+    document.getElementById("Console Count").addEventListener("click",function() {
+      console.count();
+    });
+    document.getElementById("Console Warn").addEventListener("click",function() {
+      console.warn("warn");
+    });
+    document.getElementById("Console Assert").addEventListener("click",function() {
+      const x = 0;
+      const y = 1;
+      const reason = 'x is expected to be greater than y';
+      console.assert(x > y, {x, y, reason});
+    });
+    document.getElementById("Console Clear").addEventListener("click",function() {
+      console.clear();
+    });
+    window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
+        console.log('Error: ' + errorMsg + ' Script: ' + url + ' Line: ' + lineNumber
+        + ' Column: ' + column + ' StackTrace: ' +  errorObj);
+      }
+    document.getElementById("Trigger Global Error").addEventListener("click",function() {
+      Money(money);
+    });
+
+
+
   </script>
 </body>
 
